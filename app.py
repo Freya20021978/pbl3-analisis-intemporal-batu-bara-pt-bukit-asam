@@ -6,9 +6,37 @@ import numpy as np
 # Konfigurasi Halaman
 st.set_page_config(
     page_title="Analisis Intertemporal Batubara PT Bukit Asam",
-    page_icon=" 煤 ",
+    page_icon="⛏️",
     layout="wide",
 )
+
+# -----------------------------
+# HEADER: LOGO & IDENTITAS
+# -----------------------------
+col_logo, col_judul = st.columns([1, 5])
+
+with col_logo:
+    # Mengambil file "Logo Unisbaa.png" sesuai yang ada di folder laptopmu.
+    # Menggunakan try-except agar website tidak langsung blank/error jika file gambar belum di-upload ke GitHub
+    try:
+        st.image("Logo Unisbaa.png", width=120)
+    except:
+        st.image("https://upload.wikimedia.org/wikipedia/id/archive/2/2d/20160919131652%21Logo_Unpad.png", width=120)
+
+with col_judul:
+    st.title("Analisis Intertemporal Sumber Daya Alam: PT Bukit Asam Tbk")
+    
+    col_id1, col_id2 = st.columns([2, 1])
+    with col_id1:
+        st.markdown("### **Kelompok 3 - Ekonomi Pembangunan**")
+    with col_id2:
+        st.markdown("### **Dosen Pengampu: Yukha Sundaya**")
+    
+    st.markdown("""
+    **Anggota Kelompok:** Ahmad Irvan Nur Varizki (10090224011) &nbsp; | &nbsp; Freya Helga Pebrian (10090224017) &nbsp; | &nbsp; Muhammad Yaasin As Suhaimi (10090224028)
+    """)
+
+st.markdown("---")
 
 # -----------------------------
 # Helper Functions
@@ -52,13 +80,13 @@ discount_rate = st.sidebar.slider("Tingkat Diskonto (r)", 0.0, 0.15, r_default, 
 horizon = st.sidebar.slider("Horizon Waktu (T)", 10, 150, T_star_pdf, 1)
 mc_sim = st.sidebar.number_input("Biaya Marginal (MC)", value=mc_praktikum)
 
-# -----------------------------
-# HEADER
-# -----------------------------
-st.title("Dashboard Analisis Ekonomi Batubara PT Bukit Asam")
-st.markdown("---")
+# Penutup Sidebar
+st.sidebar.markdown("<br><br>", unsafe_allow_html=True) 
+st.sidebar.markdown("<h4 style='text-align: center; color: gray;'>FEB UNISBA | Ekonomi SDA</h4>", unsafe_allow_html=True)
 
-# Row 1: Key Metrics
+# -----------------------------
+# KONTEN UTAMA: METRICS
+# -----------------------------
 latest_p = df["Harga_P"].iloc[-1]
 latest_q = df["Produksi_Q"].iloc[-1]
 
@@ -72,7 +100,7 @@ m3.metric("MC Rata-rata", fmt_idr(mc_praktikum))
 # -----------------------------
 st.header("1. Estimasi Fungsi Permintaan")
 st.latex(r"P = 36.22151 - 0.00000454Q")
-st.write(f"Berdasarkan hasil regresi, Choke Price diperoleh sebesar **{a_demand}** dan kuantitas maksimum saat harga nol adalah **7,929,515 unit**[cite: 14, 24].")
+st.write(f"Berdasarkan hasil regresi, Choke Price diperoleh sebesar **{a_demand}** dan kuantitas maksimum saat harga nol adalah **7,929,515 unit**.")
 
 # Plot Permintaan
 q_range = np.linspace(0, 8000000, 100)
@@ -89,10 +117,10 @@ st.pyplot(fig_demand)
 # BAB III & V: EFISIENSI DINAMIS (HOTELLING)
 # -----------------------------
 st.header("2. Alokasi Intertemporal & Hotelling Rule")
-st.write(f"Waktu Optimal Habis Cadangan ($T^*$) diestimasi sekitar **{T_star_pdf} tahun**[cite: 28].")
+st.write(f"Waktu Optimal Habis Cadangan ($T^*$) diestimasi sekitar **{T_star_pdf} tahun**.")
 
 # Simulasi Jalur Harga Hotelling
-t_years = np.arange(0, horizon + 1)
+t_years = np.arange(0, int(horizon) + 1)
 # Menggunakan logika MUC_t = MUC_0 * (1+r)^t
 muc_0 = 15163.0  # Data awal MUC dari tabel Hal. 2
 prices_hotelling = [mc_sim + (muc_0 * (1 + discount_rate)**t) for t in t_years]
@@ -121,9 +149,20 @@ st.dataframe(df.style.format({
 # -----------------------------
 st.header("4. Analisis & Kesimpulan")
 st.info("""
-* **Ketersediaan**: PT Bukit Asam memiliki cadangan batubara mencapai miliaran ton[cite: 36].
-* **Keberlanjutan**: Peningkatan produksi yang terlalu cepat dapat mempercepat deplesi sumber daya[cite: 37].
-* **Efisiensi**: Strategi ekstraksi harus mempertimbangkan nilai intertemporal agar optimal bagi jangka panjang[cite: 40].
+* **Ketersediaan**: PT Bukit Asam memiliki cadangan batubara mencapai miliaran ton.
+* **Keberlanjutan**: Peningkatan produksi yang terlalu cepat dapat mempercepat deplesi sumber daya.
+* **Efisiensi**: Strategi ekstraksi harus mempertimbangkan nilai intertemporal agar optimal bagi jangka panjang.
 """)
 
 st.caption("Data disesuaikan dengan Laporan Praktikum PT Bukit Asam 2014-2024")
+
+# -----------------------------
+# FOOTER / PENUTUP
+# -----------------------------
+st.markdown("<br><br><br>", unsafe_allow_html=True)
+st.markdown(
+    "<p style='text-align: center; color: gray; font-size: 14px;'>"
+    "Dashboard Analisis Ekonomi SDA | PBL 3 | FEB UNISBA | 2026"
+    "</p>", 
+    unsafe_allow_html=True
+)
